@@ -25,7 +25,7 @@ def show_partnership_page():
         merged_record = pd.merge(record_df, company_df[['id', 'name']], left_on='company_id', right_on='id', how='left')
         display_record = merged_record[['updated_at', 'name', 'Digestion_time', 'details']].copy()
         display_record.columns = ['記録日', '会社名', '消化時間', '内容']
-        st.dataframe(display_record.sort_values('記録日', ascending=False), use_container_width=True, hide_index=True)
+        st.dataframe(display_record.sort_values('記録日', ascending=False), width="stretch", hide_index=True)
     else:
         st.write("履歴はまだありません。")
 
@@ -96,4 +96,5 @@ def show_partnership_page():
             st.cache_data.clear()
             
             st.success("割り当て時間を保存しました！")
+
             st.rerun()
