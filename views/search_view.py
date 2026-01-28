@@ -59,7 +59,7 @@ def show_search_page():
             "logo": "ロゴ使用許可",
             "updated_at": "更新日"
         },
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         on_select="rerun",
         selection_mode="single-row",
@@ -93,4 +93,5 @@ def show_search_page():
         else:
             st.write("この会社のロボットメーカー情報はまだ登録されていません。")
     else:
+
         st.caption("☝️ 表の行をクリックすると、その会社の取扱いロボットメーカーが表示されます。")
