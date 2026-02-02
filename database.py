@@ -6,17 +6,20 @@ def get_connection():
     """スプレッドシートへの接続を確立する"""
     return st.connection("gsheets", type=GSheetsConnection)
 
+# キャッシュを有効にする（10分間はGoogleに再確認しない）
+@st.cache_data(ttl=600)
 def get_data(sheet_name):
     """指定したシートのデータを全件読み込む"""
     conn = get_connection()
-    ## ttl=0 をやめ、1分間（あるいは30秒）キャッシュを保持する
-    return conn.read(worksheet=sheet_name, ttl="1m")
+    return conn.read(worksheet=sheet_name)
 
 def save_data(sheet_name, df):
     """指定したシートにデータフレームを上書き保存する"""
     conn = get_connection()
     # 数値が消えたり型が崩れたりしないよう、空値を処理して更新します
     conn.update(worksheet=sheet_name, data=df)
+    # 保存したらキャッシュをクリアして、次の読み込みで最新が反映されるようにする
+    st.cache_data.clear()
 
 def init_db():
     """

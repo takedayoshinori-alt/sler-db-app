@@ -87,7 +87,7 @@ def show_search_page():
                 cols = st.columns(len(related_robots))
                 for i, (_, row) in enumerate(related_robots.iterrows()):
                     with cols[i]:
-                        st.info(f"**{row['name_y']}**") # merge後のカラム名に注意(Robotシートのname)
+                        st.info(f"**{row['name']}**") # merge後のカラム名に注意(Robotシートのname)
             else:
                 st.write("ロボットメーカーの詳細が見つかりません。")
         else:
