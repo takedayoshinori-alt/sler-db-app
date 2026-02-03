@@ -17,6 +17,9 @@ def show_search_page():
     df_relation_plc = get_data("Company_Plc_Relation")
     df_camera = get_data("Camera2D")
     df_relation_camera = get_data("Company_Camera2D_Relation")
+    df_camera3D = get_data("Camera3D")
+    df_relation_camera3D = get_data("Company_Camera3D_Relation")
+
 
     if df_company.empty:
         st.info("データがありません。先に会社登録を行ってください。")
@@ -101,5 +104,18 @@ def show_search_page():
                     st.warning(f"**{row['name']}**")
             else:
                 st.write("未登録")
+
+        # --- カラム4:3Dカメラメーカー ---
+        with col_4:
+            st.markdown("#### 📸 取扱い3Dカメラ")
+            target_rel_camera3D = df_relation_camera3D[df_relation_camera3D['company_id'] == selected_company_id]
+            if not target_rel_camera3D.empty:
+                related_cameras3D = pd.merge(target_rel_camera3D, df_camera3D, left_on='camera3D_id', right_on='id', how='inner')
+                for _, row in related_cameras3D.iterrows():
+                    st.warning(f"**{row['name']}**")
+            else:
+                st.write("未登録")
+
+
     else:
         st.caption("☝️ 表の行をクリックすると、詳細な取扱いメーカーが表示されます。")

@@ -104,3 +104,22 @@ def show_company_page():
             new_rel = {"id": new_id, "company_id": c_id, "camera2D_id": cam_id, "updated_at": current_date}
             save_data("Company_Camera2D_Relation", pd.concat([rel_camera2D_df, pd.DataFrame([new_rel])], ignore_index=True))
             st.rerun()
+
+    # --- 6. 関連付けセクション (Camera3D) ---
+    st.markdown("---")
+    st.header("📹 3Dカメラメーカー関連付け")
+    camera3D_df = get_data("Camera3D")
+    camera3D_list = camera3D_df['name'].tolist() if not camera3D_df.empty else []
+    rel_camera3D_df = get_data("Company_Camera3D_Relation")
+    with st.form("rel_camera3D_form"):
+        sel_c = st.selectbox("会社名", options=company_list, key="rel_c_cam3d")
+        sel_cam3d = st.selectbox("3Dカメラメーカー", options=camera3D_list)
+        if st.form_submit_button("関連付けを保存"):
+            c_id = company_df[company_df['name'] == sel_c]['id'].values[0]
+            cam3d_id = camera3D_df[camera3D_df['name'] == sel_cam3d]['id'].values[0]
+            new_id = int(rel_camera3D_df["id"].max() + 1) if not rel_camera3D_df.empty else 1
+            new_rel = {"id": new_id, "company_id": c_id, "camera3D_id": cam3d_id, "updated_at": current_date}
+            save_data("Company_Camera3D_Relation", pd.concat([rel_camera3D_df, pd.DataFrame([new_rel])], ignore_index=True))
+            st.rerun()
+
+            

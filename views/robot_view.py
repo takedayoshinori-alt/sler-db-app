@@ -101,3 +101,35 @@ def show_robot_page():
                 st.rerun()
             else:
                 st.warning("メーカー名を入力してください")
+
+    st.header("📝 対応3Dカメラメーカー追加")
+    # --- 登録フォーム ---
+    with st.form("camera3D_form", clear_on_submit=True):
+        camera3D_name = st.text_input("メーカー名")
+        submitted = st.form_submit_button("保存")
+
+        if submitted:
+            if camera3D_name:
+                # 1. 既存データの読み込み
+                df = get_data("Camera3D")
+                
+                # 2. 新しいIDの採番 (最大ID + 1)
+                new_id = int(df["id"].max() + 1) if not df.empty else 1
+                
+                # 3. 新しい行の作成
+                new_entry = {
+                    "id": new_id,
+                    "name": camera3D_name,
+                    "updated_at": current_date
+                }
+                
+                # 4. データの結合と保存
+                updated_df = pd.concat([df, pd.DataFrame([new_entry])], ignore_index=True)
+                save_data("Camera3D", updated_df)
+                st.cache_data.clear()
+                
+                st.success(f"「{camera3D_name}」を保存しました！")
+                st.rerun()
+            else:
+                st.warning("メーカー名を入力してください")
+                
