@@ -51,6 +51,7 @@ def show_search_page():
             "duedate": st.column_config.DateColumn("契約期限", width="small"),
             "allotted_time": st.column_config.NumberColumn("割り当て時間 (h)", width="small"),
             "manager": st.column_config.TextColumn("担当者名", width="medium"),
+            "features": st.column_config.TextColumn("特徴（要望）", width="stretch"),
             "updated_at": "更新日"
         },
         width="stretch",
@@ -116,6 +117,16 @@ def show_search_page():
                     st.warning(f"**{row['name']}**")
             else:
                 st.write("未登録")
+
+        st.markdown("---")
+        st.markdown("#### 📝 備考・メモ")
+        memo_content = selected_row.get("memo", "")
+        
+        if pd.notna(memo_content) and memo_content != "":
+            # メモの内容を少し目立たせる
+            st.write(memo_content)
+        else:
+            st.caption("登録されているメモはありません。")
 
 
     else:

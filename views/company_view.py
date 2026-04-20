@@ -32,12 +32,13 @@ def show_company_page():
         duedate = st.date_input("契約期限")
         address = st.text_input("住所")
         tel = st.text_input("電話番号")
-        features = st.text_input("特徴")
+        features = st.text_input("特徴（要望）")
+        memo = st.text_area("業務を依頼した所感など自由記入欄")
         logo = st.checkbox("ロゴ使用許可")
         if st.form_submit_button("保存"):
             if name:
                 new_id = int(company_df["id"].max() + 1) if not company_df.empty else 1
-                new_entry = {"id": new_id, "name": name, "duedate": duedate, "address": address, "tel": tel, "features": features, "logo": logo, "updated_at": current_date}
+                new_entry = {"id": new_id, "name": name, "duedate": duedate, "address": address, "tel": tel, "features": features, "memo": memo, "logo": logo, "updated_at": current_date}
                 save_data("Company", pd.concat([company_df, pd.DataFrame([new_entry])], ignore_index=True))
                 st.rerun()
             else:
@@ -54,11 +55,12 @@ def show_company_page():
             u_duedate = st.date_input("契約期限", value=target_row["duedate"])
             u_addr = st.text_input("住所", value=target_row["address"])
             u_tel = st.text_input("電話番号", value=target_row["tel"])
-            u_feat = st.text_area("特徴", value=target_row["features"])
+            u_feat = st.text_area("特徴（要望）", value=target_row["features"])
+            u_memo = st.text_area("業務を依頼した所感など自由記入欄", value=target_row["memo"])
             u_logo = st.checkbox("ロゴ使用許可", value=bool(target_row["logo"]))
             if st.form_submit_button("修正内容を保存"):
                 idx = company_df[company_df['id'] == target_row['id']].index
-                company_df.loc[idx, ["name", "duedate", "address", "tel", "features", "logo", "updated_at"]] = [u_name, u_duedate, u_addr, u_tel, u_feat, u_logo, current_date]
+                company_df.loc[idx, ["name", "duedate", "address", "tel", "features", "memo", "logo", "updated_at"]] = [u_name, u_duedate, u_addr, u_tel, u_feat, u_memo, u_logo, current_date]
                 save_data("Company", company_df)
                 st.rerun()
 
