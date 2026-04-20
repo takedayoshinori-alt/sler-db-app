@@ -40,7 +40,7 @@ def show_search_page():
         ]
 
     # --- 4. 表示用の整理 ---
-    display_df = df[['id', 'name', 'allotted_time', 'manager', 'mail', 
+    display_df = df[['id', 'name', 'duedate', 'allotted_time', 'manager', 'mail', 
                      'address', 'tel', 'features', 'logo', 'updated_at']].copy()
     
     event = st.dataframe(
@@ -48,6 +48,7 @@ def show_search_page():
         column_config={
             "id": st.column_config.TextColumn("ID", width="small"),
             "name": st.column_config.TextColumn("会社名", width="medium"),
+            "duedate": st.column_config.DateColumn("契約期限", width="small"),
             "allotted_time": st.column_config.NumberColumn("割り当て時間 (h)", width="small"),
             "manager": st.column_config.TextColumn("担当者名", width="medium"),
             "updated_at": "更新日"
