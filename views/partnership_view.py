@@ -7,10 +7,24 @@ def show_partnership_page():
     st.header("👪 パートナーシップ情報登録")
     current_date = datetime.now().strftime("%Y-%m-%d")
 
-    # --- 1. 各データの準備 (あらかじめ読み込んでおく) ---
-    company_df = get_data("Company")
-    partnership_df = get_data("Partnership")
-    record_df = get_data("Partnership_Record")
+    # --- 1. データの準備 (Session State を活用して API 節約) ---
+    sheets = ["Company", "Partnership", "Partnership_Record"]
+    
+    for sheet in sheets:
+        state_key = f"df_{sheet.lower()}"
+        if state_key not in st.session_state:
+            try:
+                # APIを叩いてデータを取得し、セッションに保存
+                st.session_state[state_key] = get_data(sheet)
+            except Exception as e:
+                # ここでエラーをキャッチすることで、アプリ全体のクラッシュを防ぐ
+                st.error(f"シート '{sheet}' の読み込みに失敗しました。時間をおいて再試行してください。")
+                return
+
+    # セッションからデータを使用
+    company_df = st.session_state.df_company
+    partnership_df = st.session_state.df_partnership
+    record_df = st.session_state.df_partnership_record
     
     if company_df.empty:
         st.warning("先に「会社登録」タブから会社を登録してください。")
