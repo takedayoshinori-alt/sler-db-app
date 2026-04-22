@@ -65,7 +65,7 @@ def show_company_page():
             if st.form_submit_button("修正内容を保存"):
                 idx = company_df[company_df['id'] == target_row['id']].index
                 str_duedate = u_duedate.strftime("%Y-%m-%d") if u_duedate else ""
-                company_df.loc[idx, ["name", str_duedate, "address", "tel", "features", "memo", "logo", "updated_at"]] = [u_name, u_duedate, u_addr, u_tel, u_feat, u_memo, u_logo, current_date]
+                company_df.loc[idx, ["name", "duedate", "address", "tel", "features", "memo", "logo", "updated_at"]] = [u_name, str_duedate, u_addr, u_tel, u_feat, u_memo, u_logo, current_date]
                 save_data("Company", company_df)
                 st.rerun()
 
