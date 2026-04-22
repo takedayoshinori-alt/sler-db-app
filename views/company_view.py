@@ -30,6 +30,7 @@ def show_company_page():
     with st.form("company_form", clear_on_submit=True):
         name = st.text_input("会社名")
         duedate = st.date_input("契約期限")
+        str_duedate = duedate.strftime("%Y-%m-%d") if duedate else ""
         address = st.text_input("住所")
         tel = st.text_input("電話番号")
         features = st.text_input("特徴（要望）")
@@ -38,7 +39,7 @@ def show_company_page():
         if st.form_submit_button("保存"):
             if name:
                 new_id = int(company_df["id"].max() + 1) if not company_df.empty else 1
-                new_entry = {"id": new_id, "name": name, "duedate": duedate, "address": address, "tel": tel, "features": features, "memo": memo, "logo": logo, "updated_at": current_date}
+                new_entry = {"id": new_id, "name": name, "duedate": str_duedate, "address": address, "tel": tel, "features": features, "memo": memo, "logo": logo, "updated_at": current_date}
                 save_data("Company", pd.concat([company_df, pd.DataFrame([new_entry])], ignore_index=True))
                 st.rerun()
             else:
@@ -63,7 +64,8 @@ def show_company_page():
             u_logo = st.checkbox("ロゴ使用許可", value=bool(target_row["logo"]))
             if st.form_submit_button("修正内容を保存"):
                 idx = company_df[company_df['id'] == target_row['id']].index
-                company_df.loc[idx, ["name", "duedate", "address", "tel", "features", "memo", "logo", "updated_at"]] = [u_name, u_duedate, u_addr, u_tel, u_feat, u_memo, u_logo, current_date]
+                str_duedate = u_duedate.strftime("%Y-%m-%d") if u_duedate else ""
+                company_df.loc[idx, ["name", str_duedate, "address", "tel", "features", "memo", "logo", "updated_at"]] = [u_name, u_duedate, u_addr, u_tel, u_feat, u_memo, u_logo, current_date]
                 save_data("Company", company_df)
                 st.rerun()
 
