@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import time
 from streamlit_gsheets import GSheetsConnection
 
 def get_connection():
@@ -18,6 +19,7 @@ def save_data(sheet_name, df):
     conn.update(worksheet=sheet_name, data=df)
     # 以下の2行を追加して、メモリ内のデータをリセットする
     st.cache_data.clear()
+    time.sleep(1)
     if f"{sheet_name.lower()}_df" in st.session_state:
         del st.session_state[f"{sheet_name.lower()}_df"]
 
