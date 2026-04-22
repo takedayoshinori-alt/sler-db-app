@@ -52,7 +52,10 @@ def show_company_page():
         target_row = company_df[company_df['name'] == edit_target].iloc[0]
         with st.form("edit_form"):
             u_name = st.text_input("会社名", value=target_row["name"])
-            u_duedate = st.date_input("契約期限", value=target_row["duedate"])
+            # 文字列を日付型に変換してからセットする
+            raw_date = target_row["duedate"]
+            default_date = pd.to_datetime(raw_date).date() if pd.notna(raw_date) else datetime.now().date()
+            u_duedate = st.date_input("契約期限", value=default_date)
             u_addr = st.text_input("住所", value=target_row["address"])
             u_tel = st.text_input("電話番号", value=target_row["tel"])
             u_feat = st.text_area("特徴（要望）", value=target_row["features"])

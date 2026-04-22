@@ -14,12 +14,12 @@ def get_data(sheet_name):
     return conn.read(worksheet=sheet_name)
 
 def save_data(sheet_name, df):
-    """指定したシートにデータフレームを上書き保存する"""
     conn = get_connection()
-    # 数値が消えたり型が崩れたりしないよう、空値を処理して更新します
     conn.update(worksheet=sheet_name, data=df)
-    # 保存したらキャッシュをクリアして、次の読み込みで最新が反映されるようにする
+    # 以下の2行を追加して、メモリ内のデータをリセットする
     st.cache_data.clear()
+    if f"{sheet_name.lower()}_df" in st.session_state:
+        del st.session_state[f"{sheet_name.lower()}_df"]
 
 def init_db():
     """
