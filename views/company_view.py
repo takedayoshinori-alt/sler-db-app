@@ -48,25 +48,43 @@ def show_company_page():
     # --- 2. 修正セクション ---
     st.markdown("---")
     st.header("✏️ 登録データの修正")
+    # --- 2. 修正セクション ---
     if not company_df.empty:
         edit_target = st.selectbox("修正する会社を選択", options=company_list, key="edit_sel")
         target_row = company_df[company_df['name'] == edit_target].iloc[0]
+        
         with st.form("edit_form"):
             u_name = st.text_input("会社名", value=target_row["name"])
-            # 文字列を日付型に変換してからセットする
-            raw_date = target_row["duedate"]
-            default_date = pd.to_datetime(raw_date).date() if pd.notna(raw_date) else datetime.now().date()
-            u_duedate = st.date_input("契約期限", value=default_date)
+            u_duedate = st.date_input("契約期限", value=pd.to_datetime(target_row["duedate"]).date() if pd.notna(target_row["duedate"]) else datetime.now().date())
             u_addr = st.text_input("住所", value=target_row["address"])
             u_tel = st.text_input("電話番号", value=target_row["tel"])
             u_feat = st.text_area("特徴（要望）", value=target_row["features"])
             u_memo = st.text_area("業務を依頼した所感など自由記入欄", value=target_row["memo"])
             u_logo = st.checkbox("ロゴ使用許可", value=bool(target_row["logo"]))
+            
+            # 直接ここを条件分岐にします
             if st.form_submit_button("修正内容を保存"):
-                idx = company_df[company_df['id'] == target_row['id']].index
+                # 確実にインデックスを取得
+                idx = company_df[company_df['id'] == target_row['id']].index[0]
+                
+                # 型エラー回避のための文字列変換
                 str_duedate = u_duedate.strftime("%Y-%m-%d") if u_duedate else ""
-                company_df.loc[idx, ["name", "duedate", "address", "tel", "features", "memo", "logo", "updated_at"]] = [u_name, str_duedate, u_addr, u_tel, u_feat, u_memo, u_logo, current_date]
+
+                # 【重要】Pandasの型ロックを外す魔法の1行
+                company_df = company_df.astype(object)
+
+                # 1項目ずつ代入（これが最も安全です）
+                company_df.at[idx, "name"] = u_name
+                company_df.at[idx, "duedate"] = str_duedate
+                company_df.at[idx, "address"] = u_addr
+                company_df.at[idx, "tel"] = u_tel
+                company_df.at[idx, "features"] = u_feat
+                company_df.at[idx, "memo"] = u_memo
+                company_df.at[idx, "logo"] = u_logo
+                company_df.at[idx, "updated_at"] = current_date
+                
                 save_data("Company", company_df)
+                st.success(f"{u_name} の情報を更新しました！")
                 st.rerun()
 
     # --- 3. 関連付けセクション (ロボット) ---
